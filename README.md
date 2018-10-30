@@ -12,5 +12,5 @@ Students are expected to:
 Student Info
 =======================
 
-* Name: MyName
-* ID: *YourIdHere*
+* Name: Do Quang Huy
+* ID: ICT.M7.001

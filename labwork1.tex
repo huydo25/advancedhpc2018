@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\documentclass{article}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{verbatim}
+\usepackage[english]{babel}
+
+\title{Labwork1 Avanced programming HPC}
+\author{Do Quang Huy}
+\date{October 2018}
+\lstset{breaklines=true} 
+
+\begin{document}
+\maketitle
+
+\section{Parallel Computing}
+I used the extractly the same code from labwork\_CPU function for the to complete the labwork\_OpenMP, exclude that using one more line of code before the for loop to change from sequence computing to parallel computing 
+
+\begin{verbatim}
+#pragma omp parallel for
+\end{verbatim}
+
+the computation time when allpying the parallel computing is 4 time faster than the sequence computing.  
+
+\subsection{Measure time for the speedup}
+measure speedup
+\begin{verbatim}
+USTH ICT Master 2018, Advanced Programming for HPC.
+Warming up...
+Starting labwork 1
+labwork 1 CPU ellapsed 3560.3ms
+labwork 1 OpenMP ellapsed 802.6ms
+\end{verbatim}
+
+
+for static schedule
+\begin{verbatim}
+USTH ICT Master 2018, Advanced Programming for HPC.
+Warming up...
+Starting labwork 1
+labwork 1 CPU ellapsed 3552.1ms
+labwork 1 OpenMP ellapsed 737.5ms
+\end{verbatim}
+
+for dynamic schedule
+\begin{verbatim}
+USTH ICT Master 2018, Advanced Programming for HPC.
+Warming up...
+Starting labwork 1
+labwork 1 CPU ellapsed 3580.2ms
+labwork 1 OpenMP ellapsed 701.1ms
+\end{verbatim}
+
+\end{document}
