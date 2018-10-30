@@ -26,6 +26,7 @@ int main(int argc, char **argv) {
     if (lwNum != 2 ) {
         inputFilename = std::string(argv[2]);
         labwork.loadInputImage(inputFilename);
+	labwork.saveOutputImage("abc.jpg");
     }
 
     printf("Starting labwork %d\n", lwNum);
@@ -107,9 +108,8 @@ void Labwork::labwork1_CPU() {
 void Labwork::labwork1_OpenMP() {
     int pixelCount = inputImage->width * inputImage->height;
     outputImage = static_cast<char *>(malloc(pixelCount * 3));
-    // #pragma omp parallel for 
-    #pragma omp target teams num_teams(4)
-    {
+    #pragma omp parallel for 
+    
     for (int j = 0; j < 100; j++) {		// let's do it 100 times, otherwise it's too fast!
         for (int i = 0; i < pixelCount; i++) {
             outputImage[i * 3] = (char) (((int) inputImage->buffer[i * 3] + (int) inputImage->buffer[i * 3 + 1] +
@@ -117,7 +117,6 @@ void Labwork::labwork1_OpenMP() {
             outputImage[i * 3 + 1] = outputImage[i * 3];
             outputImage[i * 3 + 2] = outputImage[i * 3];
         }
-    }
     }
 }
 
@@ -148,23 +147,6 @@ int getSPcores(cudaDeviceProp devProp) {
 }
 
 void Labwork::labwork2_GPU() {
-
-    int numDevices = 0;
-    cudaGetDeviceCount(&numDevices);
-    printf("Number of GPU: ", numDevices);
-    for(int i=0; i< numDevices; i++){
-        cudaDeviceProp p ;
-        cudaGetDeviceProperties(&p, i);
-        printf("Device: #%d \n", i);
-        printf("GPU name: %s\n", p.name);
-        printf("Clock Rate:%d\n", p.clockRate);
-        printf("Multi Processor %d\n", p.multiProcessorCount);
-        printf("Cores :%d\n", getSPcores(p));
-        printf("Wrap Size:%d\n\n", p.warpSize);
-        printf("Memory ClockRate: %d\n", p.memoryClockRate);
-        printf("Memory Bus Width: %d\n", p.memoryBusWidth);
-        printf("Memory Band Width: %d\n\n", p.memoryClockRate*p.memoryBusWidth);
-    }
     
 }
 
