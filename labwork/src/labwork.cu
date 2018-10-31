@@ -46,8 +46,10 @@ int main(int argc, char **argv) {
             labwork.labwork2_GPU();
             break;
         case 3:
+            timer.start();
             labwork.labwork3_GPU();
             labwork.saveOutputImage("labwork3-gpu-out.jpg");
+            printf("labwork 1 CPU ellapsed %.1fms\n", lwNum, timer.getElapsedTimeInMilliSec());
             break;
         case 4:
             labwork.labwork4_GPU();
@@ -168,8 +170,30 @@ void Labwork::labwork2_GPU() {
     
 }
 
+__global__ void grayscale(uchar3 *input, uchar3 *output) {
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    unsigned char g = (input[tid].x + input[tid].y + input[tid].z) / 3;
+    output[tid].z = output[tid].y = output[tid].x = g;
+}
+
 void Labwork::labwork3_GPU() {
-   
+    int pixelCount = inputImage->width * inputImage->height;
+    outputImage = static_cast<char *>(malloc(pixelCount * 3));
+    int blockSize = 1024;
+    int numBlock = pixelCount / blockSize;
+    
+    //printf("pixelCount %d blockSize %d numBlock %d\n", pixelCount, blockSize, numBlock);
+    uchar3 *devInput; 
+    uchar3 *devGray; 
+    
+    cudaMalloc(&devInput, pixelCount * sizeof(uchar3));
+    cudaMalloc(&devGray, pixelCount * sizeof(uchar3));
+    cudaMemcpy(devInput, inputImage->buffer , pixelCount * sizeof(uchar3), cudaMemcpyHostToDevice);  
+    grayscale<<<numBlock, blockSize>>>(devInput,devGray);
+    cudaMemcpy(outputImage, devGray, pixelCount * sizeof(uchar3),cudaMemcpyDeviceToHost);
+    cudaFree(devInput);
+    cudaFree(devGray);
+       
 }
 
 void Labwork::labwork4_GPU() {
