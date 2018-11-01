@@ -49,11 +49,13 @@ int main(int argc, char **argv) {
             timer.start();
             labwork.labwork3_GPU();
             labwork.saveOutputImage("labwork3-gpu-out.jpg");
-            printf("labwork 1 CPU ellapsed %.1fms\n", lwNum, timer.getElapsedTimeInMilliSec());
+            printf("labwork 3 CPU ellapsed %.1fms\n", lwNum, timer.getElapsedTimeInMilliSec());
             break;
         case 4:
+            timer.start();
             labwork.labwork4_GPU();
             labwork.saveOutputImage("labwork4-gpu-out.jpg");
+            printf("labwork 4 CPU ellapsed %.1fms\n", lwNum, timer.getElapsedTimeInMilliSec());
             break;
         case 5:
             labwork.labwork5_CPU();
@@ -166,6 +168,9 @@ void Labwork::labwork2_GPU() {
         printf("Memory ClockRate: %d\n", p.memoryClockRate);
         printf("Memory Bus Width: %d\n", p.memoryBusWidth);
         printf("Memory Band Width: %d\n\n", p.memoryClockRate*p.memoryBusWidth);
+        //printf("%d \n", p.maxThreadsPerBlock);
+        //printf("%d %d %d  \n", p.maxThreadsDim[0], p.maxThreadsDim[1],  p.maxThreadsDim[2]);
+        //printf("%d %d %d \n", p.maxGridSize[0],p.maxGridSize[1], p.maxGridSize[2] );
     }
     
 }
@@ -196,8 +201,33 @@ void Labwork::labwork3_GPU() {
        
 }
 
+__global__ void grayscale2D(uchar3 *input, uchar3 *output) {
+    int tidx = threadIdx.x + blockIdx.x * blockDim.x;
+    int tidy = threadIdx.y + blockIdx.y * blockDim.y;
+    int tid = tidx + tidy * gridDim.x * blockDim.x;
+    unsigned char g = (input[tid].x + input[tid].y + input[tid].z) / 3;
+    output[tid].z = output[tid].y = output[tid].x = g;
+}
+
+
 void Labwork::labwork4_GPU() {
+    int pixelCount = inputImage->width * inputImage->height;
+    outputImage = static_cast<char *>(malloc(pixelCount * 3));
+    dim3 blockSize = dim3(32, 32);
+    dim3 gridSize = dim3(inputImage->width/ 32 +1, inputImage->height/ 32 +1 );
+    //printf("pixelCount %d blockSize %d gridSize x %d and y %d\n", pixelCount, blockSize, gridSize.x, gridSize.y);
+    
    
+    uchar3 *devInput; 
+    uchar3 *devGray; 
+    
+    cudaMalloc(&devInput, pixelCount * sizeof(uchar3));
+    cudaMalloc(&devGray, pixelCount * sizeof(uchar3));
+    cudaMemcpy(devInput, inputImage->buffer , pixelCount * sizeof(uchar3), cudaMemcpyHostToDevice);  
+    grayscale2D<<<gridSize, blockSize>>>(devInput,devGray);
+    cudaMemcpy(outputImage, devGray, pixelCount * sizeof(uchar3),cudaMemcpyDeviceToHost);
+    cudaFree(devInput);
+    cudaFree(devGray);
 }
 
 // CPU implementation of Gaussian Blur

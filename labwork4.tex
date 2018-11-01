@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\documentclass{article}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{verbatim}
+\usepackage[english]{babel}
+
+\title{Labwork4 Avanced programming HPC}
+\author{Do Quang Huy}
+\date{October 2018}
+\lstset{breaklines=true} 
+
+\begin{document}
+\maketitle
+
+\section{Implementing}
+\begin{enumerate}
+    \item change type of blockSize to dim3 to set a 2D (32,32) instead of 1D in labwork3.
+    \item declare the gridSize with type dim3 to set the 2D form and calculate the gridSize
+    \item re-config the grayscale kernel to fit with 2D block size and grid size
+    \item pass the value of new blockSize and gridSize to the kernel
+    
+\end{enumerate}
+\section{Result}
+\subsection{Computing time}
+\begin{verbatim}
+USTH ICT Master 2018, Advanced Programming for HPC.
+Warming up...
+Starting labwork 4
+labwork 4 CPU ellapsed 131.4ms
+\end{verbatim}
+\subsection{Measuring the speed up}
+For labwork 3 and 4, I used the blockSize equal to 1024 but in 1D and 2D respectivelly. The result is quite similar due to the computing time is really short, around miliseconds.
+
+\end{document}
