@@ -25,7 +25,7 @@ public:
 
     void labwork5_CPU();
     void labwork5_GPU();
-
+    void labwork5_GPU_on_shared_memory();
     void labwork6_GPU();
 
     void labwork7_GPU();
